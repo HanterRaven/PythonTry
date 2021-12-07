@@ -104,3 +104,4 @@ import os
 #         print("Deriktoriya " + root + " udalena")
 #         os.rmdir(root)
 
+print("Noviy code")
