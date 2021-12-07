@@ -103,5 +103,6 @@ import os
 #     if len(dirs) == 0 and len(files) == 0:
 #         print("Deriktoriya " + root + " udalena")
 #         os.rmdir(root)
+print("111111111111111111111111")
 
 print("Noviy code")
