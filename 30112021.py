@@ -106,3 +106,4 @@ import os
 print("111111111111111111111111")
 
 print("Noviy code")
+print()
