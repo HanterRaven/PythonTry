@@ -1,0 +1,24 @@
+{% extends 'news/base.html' %}
+
+{% block content %}
+<h1>{{ title }}</h1>
+<div class="dia">
+    {% for i in diary_page %}
+    <p>
+
+
+        {% if user.username == i.dia_user.username %}
+        <a href="{{ i.get_absolute_url }}">
+        {{ i.date_food|date:'Y:m:d' }}
+        {{ i.food_intake}}
+        {{ i.glucoza}}
+        {{ i.insulin }}
+        </a>
+        {% endif %}
+
+
+    </p>
+    {% endfor %}
+</div>
+
+{% endblock %}
