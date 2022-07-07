@@ -5,6 +5,12 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
 from django.contrib.auth.models import User
 
+import matplotlib.pyplot as plt
+import io
+import urllib, base64
+import numpy as np
+import random
+
 from news.utils import *
 from .models import *
 from .forms import *
@@ -13,7 +19,7 @@ from .forms import *
 # Create your views here.
 
 
-class DiaryPage(DataMixin, ListView):
+class DiaryPage(DiaDataMixin, ListView):
     model = Diary
     template_name = 'diary/diary.html'
     context_object_name = 'diary_page'
@@ -28,7 +34,7 @@ class DiaryPage(DataMixin, ListView):
         return Diary.objects.all()
 
 
-class AddDiaryPage(LoginRequiredMixin, DataMixin, CreateView):
+class AddDiaryPage(LoginRequiredMixin, DiaDataMixin, CreateView):
     form_class = AddDiaryForm
     template_name = 'diary/adddiarypage.html'
     success_url = reverse_lazy('diary_page')
@@ -59,22 +65,21 @@ class AddDiaryPage(LoginRequiredMixin, DataMixin, CreateView):
                 return HttpResponse('Найден не корректный заголовок')
 
 
-class ShowRecord(DataMixin, DetailView):
-    model = Diary
-    template_name = 'diary/show_record.html'
-    context_object_name = 'show_record'
-    # slug_url_kwarg = 'id_user'
-    pk_url_kwarg = 'id_user'
+# class ShowRecord(DiaDataMixin, DetailView):
+#     model = Diary
+#     template_name = 'diary/show_record.html'
+#     context_object_name = 'show_record'
+#     pk_url_kwarg = 'id_user'
+#
+#     def get_context_data(self, *, object_list=None, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#
+#         c_def = self.get_user_context(title='Запись')
+#
+#         return dict(list(context.items()) + list(c_def.items()))
 
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super().get_context_data(**kwargs)
 
-        c_def = self.get_user_context(title='show_record')
-
-        return dict(list(context.items()) + list(c_def.items()))
-
-
-class RecordEdit(DataMixin, UpdateView):
+class RecordEdit(DiaDataMixin, UpdateView):
     model = Diary
     template_name = 'diary/edit_record.html'
     context_object_name = 'record_edit'
@@ -88,16 +93,61 @@ class RecordEdit(DataMixin, UpdateView):
 
         return dict(list(context.items()) + list(c_def.items()))
 
-    # def form_valid(self, form):
-    #     print('12312312231')
-    #     post = get_object_or_404(form)
-    #     if self.request.method == "POST":
-    #         form = AddDiaryForm(self.request.POST)
-    #         if form.is_valid():
-    #             post = form.save(commit=False)
-    #             post.dia_user = self.request.user
-    #             post.save()
-    #             return redirect('diary_page')
-    #     else:
-    #         form = AddDiaryForm(instance=post)
-    #     return render(self.request, 'diary/edit_form.html', {'form': form})
+    def form_valid(self, form):
+        form.save()
+        return redirect('diary_page')
+
+
+class Diagram(DiaDataMixin, ListView):
+    model = Diary
+    template_name = 'diary/diagram.html'
+    context_object_name = 'diagram'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        c_def = self.get_user_context(title='Редактирование записи')
+
+        # plt.plot(range(10))
+        if self.request.method == "POST":
+            test_m = self.request.POST.get('name')
+            print(test_m)
+
+        try_t = []
+        try_dia = Diary.objects.all().filter(dia_user__exact=self.request.user)
+        try_dia = try_dia.order_by('time_food')[::-1]
+        print([p.he for p in try_dia])
+        print([p.glucoza for p in try_dia])
+        print([p.insulin for p in try_dia])
+        print([str(p.date_food) + ' ' + str(p.time_food) for p in try_dia])
+
+        t_time = [str(p.date_food) + ' ' + str(p.time_food) for p in try_dia]
+        t_g = [p.glucoza for p in try_dia]
+        t_ins = [p.insulin for p in try_dia]
+        t_he = [p.he for p in try_dia]
+        for i in range(100):
+            try_t.append(random.randint(0, 20))
+
+        t = np.arange(0.0, 10.0, 0.1)
+        print(t[1])
+        s = try_t
+
+        fig, ax = plt.subplots()
+        ax.plot(t_time, t_g, 'o-b', t_time, t_he, 'o-.m', t_time, t_ins, 'og')
+
+        ax.grid()
+
+        fig = plt.gcf()
+
+        plt.setp(ax.get_xticklabels(), rotation=30, ha="right", fontsize=5)
+        plt.legend(['глюкоза', 'Хе', 'инсулин'])
+        buf = io.BytesIO()
+        fig.savefig(buf, format='png')
+        buf.seek(0)
+        string = base64.b64encode(buf.read())
+        uri = urllib.parse.quote(string)
+
+        m_def = self.get_user_context(data=uri)
+
+        return dict(list(context.items()) + list(c_def.items()) + list(m_def.items()))
+

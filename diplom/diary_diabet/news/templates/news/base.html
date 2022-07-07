@@ -6,35 +6,46 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ title }}</title>
+    <link rel='icon' href="{% static 'news/gluk_ico.png' %}" type='image/png'>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
 <div class="header">
     <div class="wrap">
+        <ul class="mainheader">
+             <li class="logo"><a href="{% url 'index' %}">
+                 <img class="imglogo" src="{% static 'news/gluk.png' %}" alt="" width="64" height="64" >
+             </a></li>
+            {% if request.user.is_authenticated %}
+            <li class="last"><a href="">{{ user.username }}</a> <a href="{% url 'logout' %}">Выйти</a></li>
+            {% else %}
+            <li class="last"><a href="{% url 'register' %}">Регистрация</a>  <a href='{% url "login" %}'>Войти</a></li>
+            {% endif %}
+        </ul>
+
         <ul class="mainmenu">
-            <li class="logo"><a href="{% url 'index' %}">logo</a></li>
+
             {% for m in menu %}
             <li class="last">
                 <a href="{% url m.url_name %}">{{m.title}}</a>
             </li>
             {% endfor %}
-            {% if request.user.is_authenticated %}
-            <li class="last"><a href=""></a>{{ user.username }}  <a href="{% url 'logout' %}">Выйти</a></li>
-            {% else %}
-            <li class="last"><a href="{% url 'register' %}">Регистрация</a>  <a href='{% url "login" %}'>Войти</a></li>
-            {% endif %}
+
         </ul>
     </div>
 </div>
 <div class="content">
     <div class="wrap">
+        {% if cat_selected != 'dia' %}
         <div class="sidebar">
             <ul>
+
                 {% if cat_selected == 0 %}
                 <li class="selected">Все Категории</li>
                 {% else %}
                 <li><a href="{% url 'index' %}">Все категории</a></li>
                 {% endif %}
+
                 {% for c in cats %}
                 {% if c.news__count > 0 %}
                 {% if c.pk == cat_selected %}
@@ -47,6 +58,7 @@
                 {% endfor %}
             </ul>
         </div>
+        {% endif %}
         <div class="main">
             {% block content %}
 

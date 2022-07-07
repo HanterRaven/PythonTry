@@ -27,7 +27,10 @@ class AddDiaryForm(forms.ModelForm):
             'he': forms.TextInput(attrs={'class': 'form-input'}),
             'insulin': forms.TextInput(attrs={'class': 'form-input'}),
             'food': forms.Textarea(attrs={'cols': 75, 'row': 20, 'class': 'form-input'}),
-            'date_food': forms.DateInput(attrs={'class': 'form-input'}),
-            'time_food': forms.TimeInput(attrs={'class': 'form-input'}),
+            'date_food': forms.DateInput(attrs={'class': 'form-input','type':"date"}),
+            'time_food': forms.TimeInput(attrs={'class': 'form-input','type':"time"}),
 
         }
+
+class Calc(forms.Form):
+    name = forms.CharField(label='ведите продукт',max_length=255)

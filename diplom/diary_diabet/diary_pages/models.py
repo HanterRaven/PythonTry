@@ -22,7 +22,7 @@ class Diary(models.Model):
         return str(self.datatime_inbase)
 
     def get_absolute_url(self):
-        return reverse('show_record', kwargs={'id_user': self.id})
+        return reverse('record_edit', kwargs={'id_user': self.id})
 
     class Meta:
         verbose_name = "Запись"

@@ -1,24 +1,52 @@
 {% extends 'news/base.html' %}
 
 {% block content %}
+<div class="diagram">
+   <a href="{% url 'diagram' %}">Diargamma</a></div>
 <h1>{{ title }}</h1>
 <div class="dia">
-    {% for i in diary_page %}
-    <p>
-
+    <table class='diatable' cellspacing="0">
+        <tr>
+            <th class="data">Дата</th>
+            <th class="time">Время</th>
+            <th class="food_intake">Прием пищи</th>
+            <th class="glucoza">Глюкоза</th>
+            <th class="he">Хе</th>
+            <th class="insulin">Инсулин</th>
+            <th class="racion">Рацион</th>
+            <th class="edit">Редактировать</th>
+        </tr>
+        {% for i in diary_page %}
 
         {% if user.username == i.dia_user.username %}
-        <a href="{{ i.get_absolute_url }}">
-        {{ i.date_food|date:'Y:m:d' }}
-        {{ i.food_intake}}
-        {{ i.glucoza}}
-        {{ i.insulin }}
-        </a>
+        <tr>
+            <td>
+                {{ i.date_food|date:'Y-m-d' }}
+            </td>
+            <td>
+                {{ i.time_food}}
+            </td>
+            <td>
+                {{ i.food_intake}}
+            </td>
+            <td>
+                {{ i.glucoza}}
+            </td>
+            <td>
+                {{ i.he }}
+            </td>
+            <td>
+                {{ i.insulin }}
+            </td>
+            <td>{{ i.food }}</td>
+            <td><a href="{{ i.get_absolute_url }}">Редактировать</a></td>
+
+        </tr>
+
         {% endif %}
 
-
-    </p>
-    {% endfor %}
+        {% endfor %}
+    </table>
 </div>
 
 {% endblock %}

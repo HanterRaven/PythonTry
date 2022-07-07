@@ -37,10 +37,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'news.apps.NewsConfig',
     'diary_pages.apps.DiaryPagesConfig',
+    'calc_dia.apps.CalcDiaConfig',
     'captcha',
     'ckeditor',
     'ckeditor_uploader',
-    'googlecharts'
+
 ]
 
 MIDDLEWARE = [

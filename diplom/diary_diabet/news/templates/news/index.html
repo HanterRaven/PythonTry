@@ -9,12 +9,12 @@
             <p class="first">Категория:{{ p.cat }}</p>
             <div class="text">
                 {% if p.photo %}
-                <img class="image" src="{{ p.photo.url }}" alt="">
+                <img class="image" src="{{ p.photo.url }}" alt=""width="250" >
                 {% else %}
-                <img class="image" src="{% static 'news/default.jpg' %}" alt="">
+                <img class="image" src="{% static 'news/default.jpg' %}" alt="" height="150">
                 {% endif %}
             <h2><a href="{{ p.get_absolute_url }}">{{p.title}}</a></h2>
-            <p>{{ p.content|striptags|truncatewords:50}}</p>
+            <p>{{ p.content|safe|truncatewords:50}}</p>
                 </div>
                 <p class="date">Дата: {{ p.time_published|date:'d-m-Y H:i:s' }}</p>
             </li>
